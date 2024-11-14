@@ -1,25 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
+
+import { AnimationsPanel } from "@features/AnimationsPanel/AnimationPanel";
+import { Canvas } from "@features/Canvas/Canvas";
+import { Timeline } from "@features/TimeLine/TImeLine";
+import { useAnimations } from "@context/AnimationContext";
+
+import { AppContainer } from "./App.styles";
 
 function App() {
+  const { onAnimationDrop } = useAnimations();
+
+  const handleAnimationDrop: OnDragEndResponder = (...props) => {
+    onAnimationDrop(...props);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DragDropContext onDragEnd={handleAnimationDrop}>
+      <AppContainer>
+        <AnimationsPanel />
+        <Canvas />
+        <Timeline />
+      </AppContainer>
+    </DragDropContext>
   );
 }
 
