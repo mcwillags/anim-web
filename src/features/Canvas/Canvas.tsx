@@ -52,9 +52,6 @@ export const Canvas = () => {
       });
     });
 
-    console.log(simplifiedTimeline);
-    console.log(timeline);
-
     runner.current = new AppAnimationRunner(
       SequentialAnimationEngine,
       timeline,

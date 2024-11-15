@@ -47,7 +47,7 @@ export const TimelineContextProvider: React.FC<React.PropsWithChildren> = ({
     setTimelineStage((prev) =>
       Object.entries(prev).reduce(
         (acc, [animationId, props]) =>
-          id === animationId ? acc : { ...prev, [animationId]: props },
+          id === animationId ? acc : { ...acc, [animationId]: props },
         {},
       ),
     );
@@ -61,20 +61,17 @@ export const TimelineContextProvider: React.FC<React.PropsWithChildren> = ({
     );
   };
 
-  const context = React.useMemo(
-    () => ({
-      timelineStage,
-      adjustTimelineStage,
-      setTimelineTrackWidth,
-      timelineDuration,
-      timelineTrackWidth,
-      createTimeline,
-      createNewTimelineItem,
-      removeTimelineItem,
-      changeTimelineDuration,
-    }),
-    [timelineStage, adjustTimelineStage, timelineDuration],
-  );
+  const context = {
+    timelineStage,
+    adjustTimelineStage,
+    setTimelineTrackWidth,
+    timelineDuration,
+    timelineTrackWidth,
+    createTimeline,
+    createNewTimelineItem,
+    removeTimelineItem,
+    changeTimelineDuration,
+  };
 
   return (
     <TimelineContext.Provider value={context}>

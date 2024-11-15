@@ -93,6 +93,10 @@ export const TimelineTrack: React.FC = () => {
     return finalAnimationX;
   };
 
+  const deleteTimelineItem = (animationId: string) => {
+    removeAnimation(animationId);
+  };
+
   const canResizeAnimation = (
     id: string,
     animationWidth: number,
@@ -137,6 +141,7 @@ export const TimelineTrack: React.FC = () => {
                   key={animationId}
                   calculateXPosition={calculateXPosition}
                   canResizeAnimation={canResizeAnimation}
+                  handleRemoveAnimation={deleteTimelineItem}
                   adjustInitialPosition={adjustAnimationInitialPosition}
                   calculateXPositionOnDragStop={calculateXPositionOnDragStop}
                   id={animationId}

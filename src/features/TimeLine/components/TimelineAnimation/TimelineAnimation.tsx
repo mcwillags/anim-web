@@ -4,9 +4,13 @@ import {
   ResizeHandle,
   TimelineAnimationContainer,
   TimelineDraggable,
+  ContextMenu,
 } from "./TimelineAnimation.styles.tsx";
 import { TimelineAnimationConstants } from "./TimelineAnimation.constants.ts";
-import { useAnimationPropertiesBeforeDrag } from "@features/TimeLine/hooks";
+import {
+  useAnimationPropertiesBeforeDrag,
+  useOnClickOutside,
+} from "@features/TimeLine/hooks";
 
 interface TimelineAnimationProps {
   index: number;
@@ -28,6 +32,7 @@ interface TimelineAnimationProps {
     animationX: number,
   ) => boolean;
   adjustInitialPosition: (id: string) => number;
+  handleRemoveAnimation: (id: string) => void;
 }
 
 export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
@@ -36,6 +41,7 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
   canResizeAnimation,
   calculateXPositionOnDragStop,
   adjustInitialPosition,
+  handleRemoveAnimation,
 }) => {
   const [isResizing, setIsResizing] = React.useState(false);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -44,6 +50,9 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
   const [containerWidth, setContainerWidth] = React.useState(
     TimelineAnimationConstants.defaultWidth,
   );
+  const contextMenuRef = React.useRef<HTMLDivElement>(null);
+
+  const [showContextMenu, setShowContextMenu] = React.useState(false);
 
   React.useEffect(() => {
     setX(adjustInitialPosition(id));
@@ -85,6 +94,19 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
     setIsResizing(false);
   };
 
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setShowContextMenu(true);
+  };
+
+  const handleDelete = () => {
+    handleRemoveAnimation(id);
+  };
+
+  useOnClickOutside(contextMenuRef, () => {
+    setShowContextMenu(false);
+  });
+
   return (
     <TimelineDraggable
       draggable={!isResizing}
@@ -93,6 +115,7 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
       onDragEnd={handleDragEnd}
       isDragging={isDragging}
       x={x}
+      onContextMenu={handleContextMenu}
     >
       <Resizable
         width={containerWidth}
@@ -110,6 +133,12 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
           </TimelineAnimationContainer>
         </div>
       </Resizable>
+
+      {showContextMenu && (
+        <ContextMenu ref={contextMenuRef}>
+          <button onClick={handleDelete}>Delete</button>
+        </ContextMenu>
+      )}
     </TimelineDraggable>
   );
 };

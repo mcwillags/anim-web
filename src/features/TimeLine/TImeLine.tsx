@@ -8,7 +8,7 @@ import {
   TimeIndicators,
   TimeMarker,
 } from "./TimeLine.styles";
-import { TimelineTrack } from "./components/TimelineTrack/TimelineTrack.tsx";
+import { TimelineTrack } from "./components/TimelineTrack/TimelineTrack.tsx"
 import { useTimeline } from "@context/TimelineContext";
 import { TimelineContextConstants } from "@context/TimelineContext";
 
