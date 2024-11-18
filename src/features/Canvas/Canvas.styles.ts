@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const CanvasContainer = styled.div`
   grid-area: canvas;
@@ -10,11 +10,35 @@ export const CanvasContainer = styled.div`
   gap: 16px;
 `;
 
+export const PlayerContainer = styled.div`
+  width: 800px;
+  height: 450px;
+`;
+
 export const StyledCanvas = styled.canvas`
   background-color: #1a1a1a;
   border-radius: 4px;
-  width: 800px;
-  height: 450px;
+  width: 100%;
+  height: 100%;
+
+`;
+
+export const StyledIFrame = styled.iframe`
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+
+  display: none;
+`;
+
+export const StyledVideo = styled.video`
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+
+  display: none;
 `;
 
 export const ControlsContainer = styled.div`

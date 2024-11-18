@@ -136,7 +136,7 @@ export const TimelineTrack: React.FC = () => {
         {({ droppableProps, innerRef, placeholder }) => (
           <>
             <TimelineTrackContainer ref={innerRef} {...droppableProps}>
-              {animations.map((animationId, index) => (
+              {animations.map((animationId) => (
                 <TimelineAnimation
                   key={animationId}
                   calculateXPosition={calculateXPosition}
@@ -145,7 +145,6 @@ export const TimelineTrack: React.FC = () => {
                   adjustInitialPosition={adjustAnimationInitialPosition}
                   calculateXPositionOnDragStop={calculateXPositionOnDragStop}
                   id={animationId}
-                  index={index}
                 />
               ))}
             </TimelineTrackContainer>

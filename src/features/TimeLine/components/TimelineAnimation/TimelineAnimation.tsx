@@ -13,7 +13,6 @@ import {
 } from "@features/TimeLine/hooks";
 
 interface TimelineAnimationProps {
-  index: number;
   id: string;
   calculateXPosition: (
     id: string,

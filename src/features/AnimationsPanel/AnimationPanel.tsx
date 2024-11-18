@@ -5,9 +5,11 @@ import { DragDropConstants } from "@constants";
 import { PanelContainer, AnimationItem } from "./AnimationPanel.styles";
 
 const animations = [
-  { id: "SlideInAnimation", name: "Slide In Animation" },
-  { id: "CircleAnimation", name: "New Animka" },
-  { id:"SnowflakeAnimation", name:"Snowflakes"}
+  { id: "SlideInAnimation", name: "Slide In" },
+  { id: "CircleAnimation", name: "Circle" },
+  { id: "SnowflakeAnimation", name: "Snowflake" },
+  { id: "JSONPlaceholderDisplay", name: "JSONPlaceholder" },
+  { id: "SpringVideo", name: "Spring" },
   // Додайте інші анімації тут
 ];
 
