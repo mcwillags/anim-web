@@ -8,11 +8,12 @@ export const CanvasContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: center;
 `;
 
 export const PlayerContainer = styled.div`
-  width: 800px;
-  height: 450px;
+  width: 1100px;
+  height: 550px;
 `;
 
 export const StyledCanvas = styled.canvas`
