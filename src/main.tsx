@@ -5,23 +5,18 @@ import { AnimationContextProvider } from "@context/AnimationContext";
 
 import App from "./App";
 import { TimelineContextProvider } from "@context/TimelineContext/TimelineContext.tsx";
+import { AnimationLoaderProvider } from "@context/AnimationLoaderContext";
+import { disableDragGhostImage } from "@utils/disableDragGhostImage.ts";
 
-document.addEventListener(
-  "dragstart",
-  (event: any) => {
-    const img = new Image();
-    img.src =
-      "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
-    event.dataTransfer.setDragImage(img, 0, 0);
-  },
-  false,
-);
+disableDragGhostImage();
 
 createRoot(document.getElementById("root")!).render(
-  <TimelineContextProvider>
-    <AnimationContextProvider>
-      <GlobalStyles />
-      <App />
-    </AnimationContextProvider>
-  </TimelineContextProvider>,
+  <AnimationLoaderProvider>
+    <TimelineContextProvider>
+      <AnimationContextProvider>
+        <GlobalStyles />
+        <App />
+      </AnimationContextProvider>
+    </TimelineContextProvider>
+  </AnimationLoaderProvider>,
 );

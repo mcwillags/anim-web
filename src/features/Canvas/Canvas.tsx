@@ -41,6 +41,7 @@ export const Canvas = () => {
   const [simplifiedTimeline, setSimplifiedTimeline] =
     React.useState<SimplifiedTimeline>([]);
   const { createTimeline } = useTimeline();
+  const [isStarted, setIsStarted] = React.useState(false);
 
   React.useLayoutEffect(() => {
     const canvas$ = canvasRef.current;
@@ -82,6 +83,14 @@ export const Canvas = () => {
 
     runner.current.start();
     setIsPlaying(true);
+    setIsStarted(true);
+  };
+
+  const handleResume = () => {
+    if (!runner.current) return;
+
+    runner.current.resume();
+    setIsPlaying(true);
   };
 
   const handlePause = () => {
@@ -93,6 +102,7 @@ export const Canvas = () => {
 
   const handleResetTimeline = () => {
     handlePause();
+    setIsStarted(false);
     setSimplifiedTimeline(createTimeline());
   };
 
@@ -110,14 +120,22 @@ export const Canvas = () => {
       </PlayerContainer>
 
       <ControlsContainer>
-        {!isPlaying ? (
+        {!isStarted ? (
           <ControlButton onClick={handlePlay} title="Play">
             ▶
           </ControlButton>
         ) : (
-          <ControlButton onClick={handlePause} title="Pause">
-            ❚❚
-          </ControlButton>
+          <>
+            {isPlaying ? (
+              <ControlButton onClick={handlePause} title="Play">
+                ❚❚
+              </ControlButton>
+            ) : (
+              <ControlButton onClick={handleResume} title="Pause">
+                ▶
+              </ControlButton>
+            )}
+          </>
         )}
         <ControlButton onClick={handleResetTimeline}>⟳</ControlButton>
       </ControlsContainer>

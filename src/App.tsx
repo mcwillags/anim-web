@@ -1,11 +1,11 @@
 import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
 
 import { AnimationsPanel } from "@features/AnimationsPanel/AnimationPanel";
-import { Canvas } from "@features/Canvas/Canvas";
 import { Timeline } from "@features/TimeLine/TImeLine";
 import { useAnimations } from "@context/AnimationContext";
 
 import { AppContainer } from "./App.styles";
+import { ModulePlayer } from "@features/Canvas/ModulePlayer.tsx";
 
 function App() {
   const { onAnimationDrop } = useAnimations();
@@ -18,7 +18,7 @@ function App() {
     <DragDropContext onDragEnd={handleAnimationDrop}>
       <AppContainer>
         <AnimationsPanel />
-        <Canvas />
+        <ModulePlayer />
         <Timeline />
       </AppContainer>
     </DragDropContext>

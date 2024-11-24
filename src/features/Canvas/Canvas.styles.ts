@@ -12,16 +12,21 @@ export const CanvasContainer = styled.div`
 `;
 
 export const PlayerContainer = styled.div`
-  width: 1100px;
-  height: 550px;
+  width: 1200px;
+  height: 590px;
+
+  position: relative;
+  background-color: #1a1a1a;
 `;
 
 export const StyledCanvas = styled.canvas`
-  background-color: #1a1a1a;
   border-radius: 4px;
   width: 100%;
   height: 100%;
 
+  position: absolute;
+  visibility: hidden;
+  inset: 0;
 `;
 
 export const StyledIFrame = styled.iframe`
@@ -30,7 +35,9 @@ export const StyledIFrame = styled.iframe`
   width: 100%;
   height: 100%;
 
-  display: none;
+  position: absolute;
+  visibility: hidden;
+  inset: 0;
 `;
 
 export const StyledVideo = styled.video`
@@ -39,7 +46,9 @@ export const StyledVideo = styled.video`
   width: 100%;
   height: 100%;
 
-  display: none;
+  position: absolute;
+  visibility: hidden;
+  inset: 0;
 `;
 
 export const ControlsContainer = styled.div`
