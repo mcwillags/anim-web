@@ -4,7 +4,7 @@ export const TimelineAnimationContainer = styled.div<{ isDragging: boolean }>`
   height: 100%;
   background-color: ${(props) => (props.isDragging ? "#565454" : "#3d3d3d")};
   border-radius: 4px;
-  padding: 0.5rem;
+  padding: 1rem 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   position: relative;
@@ -13,11 +13,13 @@ export const TimelineAnimationContainer = styled.div<{ isDragging: boolean }>`
 export const ResizeHandle = styled.span`
   position: absolute;
   top: 0;
-  right: 5px;
+  right: 0;
 
   width: 15px;
   height: 50px;
-  background-color: #ffffff;
+  background-color: unset;
+
+  cursor: col-resize;
 `;
 
 export const TimelineDraggable = styled.div.attrs<{
@@ -30,33 +32,34 @@ export const TimelineDraggable = styled.div.attrs<{
 }))`
   position: absolute;
   z-index: ${(props) => (props.isDragging ? 1 : 0)};
+
+  text-align: center;
 `;
 
 export const ContextMenu = styled.div`
   position: absolute;
-  top: 0; 
-  left: 0; 
-  background-color: #2d2d2d; 
-  border: 1px solid #444; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+  top: 0;
+  left: 0;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   padding: 8px;
   z-index: 100;
   border-radius: 4px;
 
-
-  transform: translate(calc(100% + 5px), -50%); 
+  transform: translate(calc(100% + 5px), -50%);
 
   button {
-    background-color: #3d3d3d; 
+    background-color: #3d3d3d;
     border: none;
-    color: white; 
-    padding: 6px 12px; 
+    color: white;
+    padding: 6px 12px;
     cursor: pointer;
-    border-radius: 4px; 
-    transition: background-color 0.2s; 
+    border-radius: 4px;
+    transition: background-color 0.2s;
 
     &:hover {
-      background-color: #4d4d4d; 
+      background-color: #4d4d4d;
     }
   }
 `;

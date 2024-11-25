@@ -11,6 +11,7 @@ import {
   useAnimationPropertiesBeforeDrag,
   useOnClickOutside,
 } from "@features/TimeLine/hooks";
+import { AnimationContextFunctions } from "@context/AnimationContext";
 
 interface TimelineAnimationProps {
   id: string;
@@ -128,7 +129,7 @@ export const TimelineAnimation: React.FC<TimelineAnimationProps> = ({
       >
         <div style={{ width: containerWidth, height: 50 }}>
           <TimelineAnimationContainer isDragging={isDragging}>
-            {id}
+            {AnimationContextFunctions.extractDraggableId(id)}
           </TimelineAnimationContainer>
         </div>
       </Resizable>
