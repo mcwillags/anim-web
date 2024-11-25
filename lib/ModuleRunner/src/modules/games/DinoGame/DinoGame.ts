@@ -75,6 +75,8 @@ export class DinoGame implements BaseModule {
   }
 
   _completeModule() {
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+    this._canvas$.style.visibility = "hidden";
     if (this._onComplete) {
       this._onComplete();
     }

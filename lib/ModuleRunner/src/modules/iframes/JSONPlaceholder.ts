@@ -2,10 +2,7 @@ import { BaseModule } from "../../models";
 import { BaseIFrame } from "../../instances";
 import { setupModuleUsage } from "../../utils";
 
-export default class JSONPlaceholderDisplay
-  extends BaseIFrame
-  implements BaseModule
-{
+export class JSONPlaceholder extends BaseIFrame implements BaseModule {
   private readonly _src = "https://jsonplaceholder.typicode.com";
 
   constructor({ duration }: { duration: number }) {
@@ -37,4 +34,4 @@ export default class JSONPlaceholderDisplay
   }
 }
 
-setupModuleUsage("JSONPlaceholderDisplay", JSONPlaceholderDisplay);
+setupModuleUsage("JSONPlaceholder", JSONPlaceholder);

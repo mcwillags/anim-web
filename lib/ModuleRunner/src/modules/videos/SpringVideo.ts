@@ -2,7 +2,7 @@ import { BaseVideo } from "../../instances";
 import { BaseModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
-export default class SpringVideo extends BaseVideo implements BaseModule {
+export class SpringVideo extends BaseVideo implements BaseModule {
   private readonly _src =
     "https://cdn.pixabay.com/video/2024/11/07/240320_large.mp4";
 

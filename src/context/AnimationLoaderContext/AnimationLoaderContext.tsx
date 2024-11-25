@@ -4,6 +4,22 @@ import {
   LoadingStatus,
 } from "./AnimationLoaderContext.models.ts";
 import { AnimationLoaderContextFunctions } from "./AnimationLoaderContext.functions.ts";
+import * as AnimationModules from "@lib/ModuleRunner/src/modules/animations";
+import * as GameModules from "@lib/ModuleRunner/src/modules/games";
+import * as IFrameModules from "@lib/ModuleRunner/src/modules/iframes";
+import * as VideoModules from "@lib/ModuleRunner/src/modules/videos";
+
+const extractDevModules = (modules: Record<string, any>): string[] =>
+  Object.values(modules)
+    .filter((module) => module.isDev)
+    .map((module) => module.name);
+
+const DEV_MODULES = [
+  ...extractDevModules(AnimationModules),
+  ...extractDevModules(GameModules),
+  ...extractDevModules(IFrameModules),
+  ...extractDevModules(VideoModules),
+];
 
 const AnimationLoaderContext = React.createContext(
   {} as IAnimationLoaderContext,
@@ -24,12 +40,11 @@ export const AnimationLoaderProvider: React.FC<React.PropsWithChildren> = ({
       try {
         const animationNames =
           await AnimationLoaderContextFunctions.fetchAndInsertModules(
+            DEV_MODULES,
             controller.signal,
           );
 
-        setAnimationNames(
-          AnimationLoaderContextFunctions.filterAnimations(animationNames),
-        );
+        setAnimationNames(animationNames);
 
         setLoadingStatus(LoadingStatus.SUCCESS);
       } catch {

@@ -4,18 +4,6 @@ import { DragDropConstants } from "@constants";
 
 import { PanelContainer, AnimationItem } from "./AnimationPanel.styles";
 import { useModuleLoader } from "@context/AnimationLoaderContext";
-import * as AnimationModules from "@lib/ModuleRunner/src/modules/animations";
-import * as GameModules from "@lib/ModuleRunner/src/modules/games";
-
-const extractDevModules = (modules: Record<string, any>): string[] =>
-  Object.values(modules)
-    .filter((module) => module.isDev)
-    .map((module) => module.name);
-
-const DEV_ANIMATIONS = [
-  ...extractDevModules(AnimationModules),
-  ...extractDevModules(GameModules),
-];
 
 export const AnimationsPanel = () => {
   const { animationNames } = useModuleLoader();
@@ -25,7 +13,7 @@ export const AnimationsPanel = () => {
       {({ innerRef, droppableProps, placeholder }) => (
         <PanelContainer ref={innerRef} {...droppableProps}>
           <h2>Available Animations</h2>
-          {[...DEV_ANIMATIONS, ...animationNames].map((animation, index) => (
+          {animationNames.map((animation, index) => (
             <Draggable draggableId={animation} key={animation} index={index}>
               {({
                 draggableProps,

@@ -7,7 +7,7 @@ const HIDDEN_MODULE_NAMES: Record<string, boolean> = {
 };
 
 export namespace AnimationLoaderContextFunctions {
-  const fetchModulesNames = async (signal?: AbortSignal) => {
+  const fetchModulesNames = async (signal?: AbortSignal): Promise<string[]> => {
     return axios
       .get<string[]>("/get-modules-names", { signal })
       .then((res) => res.data);
@@ -19,14 +19,45 @@ export namespace AnimationLoaderContextFunctions {
     return name;
   };
 
-  const shouldDisplayAnimationName = (name: string) =>
-    !HIDDEN_MODULE_NAMES[name];
+  const addFilenameExtension = (fileName: string) => `${fileName}.js`;
 
-  export const fetchAndInsertModules = async (signal?: AbortSignal) => {
-    const modulesNames = await fetchModulesNames(signal);
+  const filterDevModulesNames = (
+    animationNames: string[],
+    devModules: string[],
+  ) => {
+    const devModulesMap = new Set(devModules.map(addFilenameExtension));
+
+    return animationNames.filter(
+      (animationName) => !devModulesMap.has(animationName),
+    );
+  };
+
+  const filterHiddenModules = (modules: string[]) =>
+    modules.filter((module) => !HIDDEN_MODULE_NAMES[module]);
+
+  export const fetchAndInsertModules = async (
+    devModules: string[],
+    signal?: AbortSignal,
+  ) => {
+    let modulesNames: string[];
+    let modulesToFetch: string[] | undefined;
+
+    try {
+      modulesNames = await fetchModulesNames(signal);
+
+      modulesToFetch = filterDevModulesNames(modulesNames, devModules);
+
+      modulesNames = [...devModules, ...modulesToFetch];
+    } catch {
+      modulesNames = devModules;
+    }
+
+    if (modulesToFetch === undefined) {
+      return filterHiddenModules(modulesNames.map(removeFilenameExtension));
+    }
 
     await Promise.all(
-      modulesNames.map(
+      modulesToFetch.map(
         (moduleName) =>
           new Promise((res, rej) => {
             const script = document.createElement("script");
@@ -40,9 +71,6 @@ export namespace AnimationLoaderContextFunctions {
       ),
     );
 
-    return modulesNames.map(removeFilenameExtension);
+    return filterHiddenModules(modulesNames.map(removeFilenameExtension));
   };
-
-  export const filterAnimations = (animationNames: string[]): string[] =>
-    animationNames.filter(shouldDisplayAnimationName);
 }
