@@ -13,7 +13,7 @@ export namespace TimelineContextFunctions {
     stage: TimelineStage,
   ): [string, TimelineAnimationProperties][] => {
     return Object.entries(stage).sort(
-      ([_, item1], [__, item2]) => item1.left - item2.left,
+      ([, item1], [, item2]) => item1.left - item2.left,
     );
   };
 

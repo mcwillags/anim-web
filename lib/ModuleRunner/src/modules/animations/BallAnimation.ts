@@ -3,7 +3,7 @@ import { BaseModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 function random_rgba() {
-  var o = Math.round,
+  const o = Math.round,
     r = Math.random,
     s = 255;
   return "rgba(" + o(r() * s) + "," + o(r() * s) + "," + o(r() * s) + ")";

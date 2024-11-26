@@ -1,27 +1,20 @@
-import { DragDropContext, OnDragEndResponder } from "react-beautiful-dnd";
+import { AnimationContextProvider } from "@context/AnimationContext";
 
-import { AnimationsPanel } from "@features/AnimationsPanel/AnimationPanel";
-import { Timeline } from "@features/TimeLine/TImeLine";
-import { useAnimations } from "@context/AnimationContext";
-
-import { AppContainer } from "./App.styles";
-import { ModulePlayer } from "@features/Canvas/ModulePlayer.tsx";
+import { AnimationLoaderProvider } from "@context/AnimationLoaderContext";
+import { TimelineContextProvider } from "@context/TimelineContext";
+import { GlobalStyles } from "./styles/GlobalStyles.ts";
+import { MainPage } from "@pages";
 
 function App() {
-  const { onAnimationDrop } = useAnimations();
-
-  const handleAnimationDrop: OnDragEndResponder = (...props) => {
-    onAnimationDrop(...props);
-  };
-
   return (
-    <DragDropContext onDragEnd={handleAnimationDrop}>
-      <AppContainer>
-        <AnimationsPanel />
-        <ModulePlayer />
-        <Timeline />
-      </AppContainer>
-    </DragDropContext>
+    <AnimationLoaderProvider>
+      <TimelineContextProvider>
+        <AnimationContextProvider>
+          <GlobalStyles />
+          <MainPage />
+        </AnimationContextProvider>
+      </TimelineContextProvider>
+    </AnimationLoaderProvider>
   );
 }
 

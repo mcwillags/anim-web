@@ -27,6 +27,8 @@
       "@constants": ["./src/constants"],
       "@context/*": ["./src/context/*"],
       "@context": ["./src/context"],
+      "@pages": ["./src/pages"],
+      "@pages/*": ["./src/pages/*"],
       "@features/*": ["./src/features/*"],
       "@utils/*": ["./src/utils/*"],
       "@utils": ["./src/utils"]

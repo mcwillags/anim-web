@@ -26,7 +26,7 @@ export namespace TimelineTrackFunctions {
     animationX: number,
     animationWidth: number,
   ): boolean => {
-    for (const [_, animationProperties] of stage) {
+    for (const [, animationProperties] of stage) {
       const overlapsWithPreviousAnimation =
         animationProperties.left + animationProperties.width > animationX;
       const overlapsWithNextAnimation =

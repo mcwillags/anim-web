@@ -1,13 +1,11 @@
 import * as React from "react";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 
-import { IAnimationContext } from "./AnimationContext.models.ts";
+import { AnimationContext } from "./AnimationContext.ts";
 import { AnimationContextFunctions } from "./AnimationContextFunctions.ts";
 import { useTimeline } from "@context/TimelineContext";
 
 import { DragDropConstants } from "@constants";
-
-const AnimationContext = React.createContext({} as IAnimationContext);
 
 export const AnimationContextProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -35,10 +33,13 @@ export const AnimationContextProvider: React.FC<React.PropsWithChildren> = ({
     [createNewTimelineItem],
   );
 
-  const removeAnimation = (id: string) => {
-    setAnimations((prev) => prev.filter((animationId) => id !== animationId));
-    removeTimelineItem(id);
-  };
+  const removeAnimation = React.useCallback(
+    (id: string) => {
+      setAnimations((prev) => prev.filter((animationId) => id !== animationId));
+      removeTimelineItem(id);
+    },
+    [removeTimelineItem],
+  );
 
   const context = React.useMemo(
     () => ({
@@ -46,7 +47,7 @@ export const AnimationContextProvider: React.FC<React.PropsWithChildren> = ({
       removeAnimation,
       onAnimationDrop,
     }),
-    [animations, onAnimationDrop],
+    [animations, onAnimationDrop, removeAnimation],
   );
 
   return (
@@ -54,16 +55,4 @@ export const AnimationContextProvider: React.FC<React.PropsWithChildren> = ({
       {children}
     </AnimationContext.Provider>
   );
-};
-
-export const useAnimations = () => {
-  const context = React.useContext(AnimationContext);
-
-  if (!context) {
-    throw new Error(
-      "useAnimations should be used within AnimationContextProvider",
-    );
-  }
-
-  return context;
 };

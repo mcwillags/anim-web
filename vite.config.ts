@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       "@lib/*": path.resolve(__dirname, "./lib"),
       "@constants/*": path.resolve(__dirname, "./constants"),
+      "@pages/*": path.resolve(__dirname, "./pages"),
       "@context/*": path.resolve(__dirname, "./context"),
       "@features/*": path.resolve(__dirname, "./features"),
       "@utils/*": path.resolve(__dirname, "./utils"),
