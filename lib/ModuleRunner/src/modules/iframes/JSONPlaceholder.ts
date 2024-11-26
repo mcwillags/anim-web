@@ -1,8 +1,8 @@
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { BaseIFrame } from "../../instances";
 import { setupModuleUsage } from "../../utils";
 
-export class JSONPlaceholder extends BaseIFrame implements BaseModule {
+export class JSONPlaceholder extends BaseIFrame implements StoppableModule {
   private readonly _src = "https://jsonplaceholder.typicode.com";
 
   constructor({ duration }: { duration: number }) {

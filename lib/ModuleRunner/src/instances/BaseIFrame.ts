@@ -2,6 +2,8 @@ import { DurationRunner } from "../utils";
 import { BaseConstants } from "../constants";
 
 export class BaseIFrame {
+  public readonly stoppable = true;
+
   protected _iframe$!: HTMLIFrameElement;
   private readonly _durationRunner: DurationRunner;
 
@@ -45,6 +47,10 @@ export class BaseIFrame {
       this._iframe$.style.visibility = "hidden";
       callback();
     };
+  }
+
+  set onFrameUpdate(callback: (frameDelta: number) => void) {
+    this._durationRunner.onFrameUpdate = callback;
   }
 
   get completed(): boolean {

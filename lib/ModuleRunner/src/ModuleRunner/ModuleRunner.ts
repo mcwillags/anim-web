@@ -1,21 +1,24 @@
-import { BaseModule } from "../models";
+import { TimelineModule } from "../models";
 import { Queue, setupModuleUsage } from "../utils";
 
 export class ModuleRunner {
-  private _timeline: Queue<BaseModule>;
-  private _currentModule: BaseModule | undefined;
+  private _timeline: Queue<TimelineModule>;
+  private _currentModule: TimelineModule | undefined;
   private _completed: boolean = false;
   private _onComplete?: () => void;
 
+  private _elapsed = 0;
+
   private _onForcePause?: () => void;
   private _onForcePlay?: () => void;
+  private _onFrameUpdate?: (elapsed: number) => void;
 
-  constructor(timeline: BaseModule[]) {
+  constructor(timeline: TimelineModule[]) {
     if (timeline.length === 0) {
       this._completed = true;
     }
 
-    this._timeline = new Queue<BaseModule>(timeline);
+    this._timeline = new Queue<TimelineModule>(timeline);
   }
 
   start() {
@@ -59,6 +62,10 @@ export class ModuleRunner {
 
     this._currentModule!.onComplete = this._proceedWithNextModule.bind(this);
 
+    if (this._currentModule!.stoppable) {
+      this._currentModule!.onFrameUpdate = this._updateTimeElapsed.bind(this);
+    }
+
     this._currentModule!.start();
   }
 
@@ -67,6 +74,13 @@ export class ModuleRunner {
       this._onComplete();
     }
     this._completed = true;
+  }
+
+  private _updateTimeElapsed(frameDelta: number) {
+    this._elapsed += frameDelta;
+    if (this._onFrameUpdate) {
+      this._onFrameUpdate(this._elapsed);
+    }
   }
 
   set onComplete(callback: () => void) {
@@ -79,6 +93,10 @@ export class ModuleRunner {
 
   set onForcePlay(callback: () => void) {
     this._onForcePlay = callback;
+  }
+
+  set onFrameUpdate(callback: (elapsed: number) => void) {
+    this._onFrameUpdate = callback;
   }
 
   get completed(): boolean {

@@ -1,11 +1,8 @@
 import { BaseAnimation } from "../../instances";
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
-export class SlideInAnimation
-  extends BaseAnimation
-  implements BaseModule
-{
+export class SlideInAnimation extends BaseAnimation implements StoppableModule {
   private rotationAngle = 0;
   private ballX: number = 30;
   private ballY: number = 100;

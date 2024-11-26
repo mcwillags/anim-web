@@ -14,11 +14,12 @@ import { SimplifiedTimeline } from "@context/TimelineContext/";
 
 import {
   BaseConstants,
-  BaseModule,
+  TimelineModule,
   CanvasConstants,
   ModuleRunner,
 } from "@lib/ModuleRunner";
 import { SaveTimelinePopup } from "./components";
+import { usePointerThrottling } from "@features/Canvas/hooks";
 
 export const ModulePlayer = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -29,6 +30,7 @@ export const ModulePlayer = () => {
   const { createTimeline } = useTimeline();
   const [isStarted, setIsStarted] = React.useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+  const [pointerMs, setPointer, resetPointer] = usePointerThrottling(0);
 
   const handlePlay = () => {
     if (!runner.current || runner.current.completed) return;
@@ -56,6 +58,7 @@ export const ModulePlayer = () => {
   const handleResetTimeline = () => {
     handlePause();
     setIsStarted(false);
+    resetPointer();
     setSimplifiedTimeline(createTimeline());
   };
 
@@ -90,7 +93,7 @@ export const ModulePlayer = () => {
     canvas$.width = CanvasConstants.canvasWidth;
     canvas$.height = CanvasConstants.canvasHeight;
 
-    const timeline: BaseModule[] = simplifiedTimeline
+    const timeline: TimelineModule[] = simplifiedTimeline
       .map(({ name, duration }) =>
         window.CustomModules[name]
           ? new window.CustomModules[name]({ duration })
@@ -102,6 +105,9 @@ export const ModulePlayer = () => {
     runner.current.onComplete = handleRunnerComplete;
     runner.current.onForcePlay = handleForcePlay;
     runner.current.onForcePause = handleForcePause;
+    runner.current.onFrameUpdate = (elapsed: number) => {
+      setPointer(elapsed);
+    };
 
     return () => {
       runner.current!.onDestroy();
@@ -143,6 +149,7 @@ export const ModulePlayer = () => {
         {simplifiedTimeline.length ? (
           <ControlButton onClick={handleSaveTimeline}>💾</ControlButton>
         ) : null}
+        <div>{(pointerMs / 1000).toFixed(1)}</div>
       </ControlsContainer>
       {isPopupOpen && <SaveTimelinePopup onClose={handlePopupClose} />}
     </CanvasContainer>

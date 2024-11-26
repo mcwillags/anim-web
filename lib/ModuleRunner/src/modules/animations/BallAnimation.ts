@@ -1,5 +1,5 @@
 import { BaseAnimation } from "../../instances";
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 function random_rgba() {
@@ -9,7 +9,7 @@ function random_rgba() {
   return "rgba(" + o(r() * s) + "," + o(r() * s) + "," + o(r() * s) + ")";
 }
 
-export class BallAnimation extends BaseAnimation implements BaseModule {
+export class BallAnimation extends BaseAnimation implements StoppableModule {
   static isDev = true;
 
   private _ballX: number;

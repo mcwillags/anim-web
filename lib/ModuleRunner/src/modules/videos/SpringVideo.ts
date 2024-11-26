@@ -1,8 +1,8 @@
 import { BaseVideo } from "../../instances";
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
-export class SpringVideo extends BaseVideo implements BaseModule {
+export class SpringVideo extends BaseVideo implements StoppableModule {
   private readonly _src =
     "https://cdn.pixabay.com/video/2024/11/07/240320_large.mp4";
 

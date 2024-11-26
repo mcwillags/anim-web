@@ -7,6 +7,7 @@ export class DurationRunner {
   private readonly _durationMs!: number;
   private _completed: boolean = false;
   private _onComplete?: () => void;
+  private _onFrameUpdate?: (frameDelta: number) => void;
   private _started: boolean = false;
 
   constructor(duration: number) {
@@ -37,6 +38,8 @@ export class DurationRunner {
 
     if (this._completed) return;
 
+    if (this._onFrameUpdate) this._onFrameUpdate(BaseConstants.FPS);
+
     setTimeout(() => this._loop(), BaseConstants.FPS);
   }
 
@@ -57,6 +60,10 @@ export class DurationRunner {
 
   set onComplete(callback: () => void) {
     this._onComplete = callback;
+  }
+
+  set onFrameUpdate(callback: (frameDelta: number) => void) {
+    this._onFrameUpdate = callback;
   }
 
   get playing(): boolean {

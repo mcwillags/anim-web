@@ -2,6 +2,8 @@ import { DurationRunner } from "../utils";
 import { BaseConstants } from "../constants";
 
 export class BaseVideo {
+  public readonly stoppable = true;
+
   protected _video$!: HTMLVideoElement;
   private readonly _durationRunner: DurationRunner;
 
@@ -45,6 +47,10 @@ export class BaseVideo {
       this._completeModule();
       callback();
     };
+  }
+
+  set onFrameUpdate(callback: (frameDelta: number) => void) {
+    this._durationRunner.onFrameUpdate = callback;
   }
 
   private _completeModule() {

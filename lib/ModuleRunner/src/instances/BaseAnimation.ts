@@ -2,6 +2,8 @@ import { BaseConstants } from "../constants";
 import { convertSecondsToMs, shouldPlayFrame } from "../utils";
 
 export class BaseAnimation {
+  public readonly stoppable = true;
+
   protected _canvas$!: HTMLCanvasElement;
   protected _context!: CanvasRenderingContext2D;
   protected _canvasWidth!: number;
@@ -13,6 +15,7 @@ export class BaseAnimation {
   private _previousTimestamp: number | null = null;
   private _elapsedMs = 0;
   private _onComplete!: () => void;
+  private _onFrameComplete!: (frameDelta: number) => void;
   private _leadingAnimationFrameId?: number;
 
   constructor(duration: number) {
@@ -71,7 +74,15 @@ export class BaseAnimation {
   private _loop(callback?: () => void) {
     if (!this._playing) return;
 
-    const shouldPlayNextFrame = this._shouldPlayFrame();
+    const frameDelta = this._getFrameTimestamp();
+
+    const shouldPlayNextFrame = this._shouldPlayFrame(frameDelta);
+
+    if (shouldPlayNextFrame && frameDelta) {
+      this._updateFrameTimestamp(frameDelta);
+      this._onFrameComplete(frameDelta);
+    }
+
     this._checkIsCompleted();
 
     if (this._completed) return;
@@ -85,22 +96,24 @@ export class BaseAnimation {
     });
   }
 
-  private _shouldPlayFrame(): boolean {
+  private _getFrameTimestamp(): number | null {
     if (this._previousTimestamp === null) {
       this._previousTimestamp = Date.now();
-      return true;
+      return null;
     }
 
-    const frameDelta = Date.now() - this._previousTimestamp;
+    return Date.now() - this._previousTimestamp;
+  }
 
-    const shouldPlayNextFrame = shouldPlayFrame(frameDelta);
+  private _shouldPlayFrame(frameDelta: number | null): boolean {
+    if (frameDelta === null) return true;
 
-    if (shouldPlayNextFrame) {
-      this._previousTimestamp = Date.now();
-      this._elapsedMs += frameDelta;
-    }
+    return shouldPlayFrame(frameDelta);
+  }
 
-    return shouldPlayNextFrame;
+  private _updateFrameTimestamp(frameDelta: number) {
+    this._previousTimestamp = Date.now();
+    this._elapsedMs += frameDelta;
   }
 
   private _checkIsCompleted(): void {
@@ -123,6 +136,10 @@ export class BaseAnimation {
 
   public set onComplete(callback: () => void) {
     this._onComplete = callback;
+  }
+
+  set onFrameUpdate(callback: (frameDelta: number) => void) {
+    this._onFrameComplete = callback;
   }
 
   public get playing(): boolean {

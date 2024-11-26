@@ -1,8 +1,8 @@
-import { BaseModule } from "@lib/ModuleRunner";
+import { TimelineModule } from "@lib/ModuleRunner";
 
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    CustomModules: Record<string, new (...args: any[]) => BaseModule>;
+    CustomModules: Record<string, new (...args: any[]) => TimelineModule>;
   }
 }

@@ -1,10 +1,10 @@
 import { BaseAnimation } from "../../instances";
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 export class SnowflakeAnimation
   extends BaseAnimation
-  implements BaseModule
+  implements StoppableModule
 {
   private snowflakes: { x: number; y: number; size: number }[] = [];
 

@@ -1,8 +1,8 @@
 import { BaseAnimation } from "../../instances";
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
-export class CircleAnimation extends BaseAnimation implements BaseModule {
+export class CircleAnimation extends BaseAnimation implements StoppableModule {
   private angle: number = 0;
   private radius: number = 100;
   private readonly centerX: number;

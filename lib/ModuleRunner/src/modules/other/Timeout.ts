@@ -1,8 +1,10 @@
-import { BaseModule } from "../../models";
+import { StoppableModule } from "../../models";
 import { DurationRunner } from "../../utils";
 import { setupModuleUsage } from "../../utils";
 
-export default class Timeout implements BaseModule {
+export default class Timeout implements StoppableModule {
+  public readonly stoppable = true;
+
   private _durationRunner: DurationRunner;
 
   constructor({ duration }: { duration: number }) {
@@ -27,6 +29,10 @@ export default class Timeout implements BaseModule {
 
   set onComplete(callback: () => void) {
     this._durationRunner.onComplete = callback;
+  }
+
+  set onFrameUpdate(callback: (frameDelta: number) => void) {
+    this._durationRunner.onFrameUpdate = callback;
   }
 }
 
