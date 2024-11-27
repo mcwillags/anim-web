@@ -7,14 +7,22 @@ import {
   DurationLabel,
   TimeIndicators,
   TimeMarker,
+  TimelineCursor,
+  TimelineCursorContainer,
 } from "./TimeLine.styles";
 import { TimelineTrack } from "./components/TimelineTrack/TimelineTrack.tsx";
 import { useTimeline } from "@context/TimelineContext";
 import { TimelineContextConstants } from "@context/TimelineContext";
+import { TimelineFunctions } from "@features/TimeLine/Timeline.functions.ts";
 
 export const Timeline = () => {
-  const { timelineDuration, changeTimelineDuration } = useTimeline();
   const [timeMarkers, setTimeMarkers] = React.useState<number[]>([]);
+  const {
+    timelineDuration,
+    changeTimelineDuration,
+    timelineTimestamp,
+    timelineTrackWidth,
+  } = useTimeline();
 
   const formatTime = (time: number): string => {
     return Number(time.toFixed(1)) + "s";
@@ -35,6 +43,12 @@ export const Timeline = () => {
       changeTimelineDuration(value);
     }
   };
+
+  const cursorPosition = TimelineFunctions.calculateCursorPosition(
+    timelineTimestamp,
+    timelineDuration,
+    timelineTrackWidth,
+  );
 
   return (
     <TimelineContainer>
@@ -65,6 +79,10 @@ export const Timeline = () => {
           </TimeMarker>
         ))}
       </TimeIndicators>
+
+      <TimelineCursorContainer>
+        <TimelineCursor x={cursorPosition} />
+      </TimelineCursorContainer>
 
       <TimelineTrack />
     </TimelineContainer>

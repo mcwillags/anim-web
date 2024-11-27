@@ -3,16 +3,19 @@ import { SimplifiedTimeline, TimelineStage } from "./TimelineContext.models.ts";
 import { TimelineAnimationConstants } from "@features/TimeLine/components/TimelineAnimation";
 import { TimelineContextFunctions } from "./TimelineContextFunctions.ts";
 import { TimelineContext } from "./TimelineContext.tsx";
+import { useDiffThrottling } from "@hooks";
 
 export const TimelineContextProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [timelineStage, setTimelineStage] = React.useState<TimelineStage>({});
-  const timelineTrackWidth = React.useRef<number>(0);
   const [timelineDuration, setTimelineDuration] = React.useState(60);
+  const [timelineTrackWidth, setTimelineTrackWidth] = React.useState<number>(0);
+  const [timelineTimestamp, setTimelineTimestamp, resetTimelineTimestamp] =
+    useDiffThrottling(0, 30);
 
-  const setTimelineTrackWidth = (width: number) => {
-    timelineTrackWidth.current = width;
+  const setInitialTimelineTrackWidth = (width: number): void => {
+    setTimelineTrackWidth(width);
   };
 
   const adjustTimelineStage = (
@@ -29,11 +32,17 @@ export const TimelineContextProvider: React.FC<React.PropsWithChildren> = ({
     }));
   };
 
-  const changeTimelineDuration = (newDuration: number) => {
+  const updateTimelineTimestamp = (elapsed: number | null): void => {
+    if (elapsed === null) return resetTimelineTimestamp();
+
+    setTimelineTimestamp(elapsed);
+  };
+
+  const changeTimelineDuration = (newDuration: number): void => {
     setTimelineDuration(newDuration);
   };
 
-  const createNewTimelineItem = (id: string) => {
+  const createNewTimelineItem = (id: string): void => {
     adjustTimelineStage(id, 0, TimelineAnimationConstants.defaultWidth);
   };
 
@@ -50,21 +59,23 @@ export const TimelineContextProvider: React.FC<React.PropsWithChildren> = ({
   const createTimeline = (): SimplifiedTimeline => {
     return TimelineContextFunctions.generateTimeline(
       timelineStage,
-      timelineTrackWidth.current,
+      timelineTrackWidth,
       timelineDuration,
     );
   };
 
   const context = {
     timelineStage,
-    adjustTimelineStage,
-    setTimelineTrackWidth,
+    timelineTimestamp,
     timelineDuration,
     timelineTrackWidth,
     createTimeline,
-    createNewTimelineItem,
     removeTimelineItem,
+    adjustTimelineStage,
+    createNewTimelineItem,
     changeTimelineDuration,
+    updateTimelineTimestamp,
+    setInitialTimelineTrackWidth,
   };
 
   return (

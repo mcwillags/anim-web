@@ -1,8 +1,6 @@
 import * as React from "react";
 
-const MIN_DIFF_TO_UPDATE = 100;
-
-export const usePointerThrottling = (initialValue = 0) => {
+export const useDiffThrottling = (initialValue = 0, updateDiff: number = 100) => {
   const [value, setValue] = React.useState(initialValue);
   const prevValue = React.useRef(initialValue);
 
@@ -10,7 +8,7 @@ export const usePointerThrottling = (initialValue = 0) => {
     (updated: number) => {
       const diff = updated - prevValue.current;
 
-      if (diff >= MIN_DIFF_TO_UPDATE) {
+      if (diff >= updateDiff) {
         setValue(updated);
         prevValue.current = updated;
       }

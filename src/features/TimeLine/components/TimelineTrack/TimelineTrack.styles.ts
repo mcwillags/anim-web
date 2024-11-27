@@ -7,5 +7,6 @@ export const TimelineTrackContainer = styled.div`
   position: relative;
 
   display: flex;
+  align-items: center;
   padding-block: 1rem;
 `;

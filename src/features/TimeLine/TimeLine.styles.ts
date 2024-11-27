@@ -72,6 +72,22 @@ export const TimeMarker = styled.div`
   }
 `;
 
+export const TimelineCursorContainer = styled.div`
+  position: relative;
+`;
+
+export const TimelineCursor = styled.div.attrs<{ x: number }>((props) => ({
+  style: {
+    left: `${props.x}px`,
+  },
+}))`
+  z-index: 2;
+  position: absolute;
+  width: 2px;
+  height: 100px;
+  background-color: #ffffff;
+`;
+
 export const DurationSelect = styled.select`
   margin-left: 8px;
   padding: 4px;

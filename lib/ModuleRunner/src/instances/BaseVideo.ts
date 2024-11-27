@@ -26,6 +26,7 @@ export class BaseVideo {
 
   protected _start() {
     this._video$.style.visibility = "visible";
+    this._video$.play();
     this._durationRunner.start();
   }
 

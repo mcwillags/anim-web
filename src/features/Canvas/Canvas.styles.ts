@@ -85,3 +85,11 @@ export const ControlButton = styled.button`
     opacity: 0.5;
   }
 `;
+
+export const Timer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  padding-inline: 0.5rem;
+`;

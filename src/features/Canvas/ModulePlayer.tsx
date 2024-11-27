@@ -7,6 +7,7 @@ import {
   StyledIFrame,
   StyledVideo,
   PlayerContainer,
+  Timer,
 } from "./Canvas.styles";
 
 import { useTimeline } from "@context/TimelineContext/";
@@ -19,7 +20,7 @@ import {
   ModuleRunner,
 } from "@lib/ModuleRunner";
 import { SaveTimelinePopup } from "./components";
-import { usePointerThrottling } from "@features/Canvas/hooks";
+import { ModuleRunnerFunctions } from "./ModulePlayer.functions.ts";
 
 export const ModulePlayer = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -27,10 +28,10 @@ export const ModulePlayer = () => {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [simplifiedTimeline, setSimplifiedTimeline] =
     React.useState<SimplifiedTimeline>([]);
-  const { createTimeline } = useTimeline();
+  const { createTimeline, timelineTimestamp, updateTimelineTimestamp } =
+    useTimeline();
   const [isStarted, setIsStarted] = React.useState(false);
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
-  const [pointerMs, setPointer, resetPointer] = usePointerThrottling(0);
 
   const handlePlay = () => {
     if (!runner.current || runner.current.completed) return;
@@ -58,7 +59,7 @@ export const ModulePlayer = () => {
   const handleResetTimeline = () => {
     handlePause();
     setIsStarted(false);
-    resetPointer();
+    updateTimelineTimestamp(null);
     setSimplifiedTimeline(createTimeline());
   };
 
@@ -106,7 +107,7 @@ export const ModulePlayer = () => {
     runner.current.onForcePlay = handleForcePlay;
     runner.current.onForcePause = handleForcePause;
     runner.current.onFrameUpdate = (elapsed: number) => {
-      setPointer(elapsed);
+      updateTimelineTimestamp(elapsed);
     };
 
     return () => {
@@ -149,7 +150,7 @@ export const ModulePlayer = () => {
         {simplifiedTimeline.length ? (
           <ControlButton onClick={handleSaveTimeline}>💾</ControlButton>
         ) : null}
-        <div>{(pointerMs / 1000).toFixed(1)}</div>
+        <Timer>{ModuleRunnerFunctions.formatTimer(timelineTimestamp)}</Timer>
       </ControlsContainer>
       {isPopupOpen && <SaveTimelinePopup onClose={handlePopupClose} />}
     </CanvasContainer>

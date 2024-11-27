@@ -1,5 +1,3 @@
-import { RefObject } from "react";
-
 export interface TimelineAnimationProperties {
   width: number;
   left: number;
@@ -13,11 +11,13 @@ export type SimplifiedTimeline = { name: string; duration: number }[];
 
 export interface ITimelineContext {
   timelineStage: TimelineStage;
-  timelineTrackWidth: RefObject<number>;
-  setTimelineTrackWidth: (width: number) => void;
+  timelineTimestamp: number;
+  timelineTrackWidth: number;
+  setInitialTimelineTrackWidth: (width: number) => void;
   adjustTimelineStage: (id: string, left: number, width: number) => void;
   createNewTimelineItem: (id: string) => void;
   removeTimelineItem: (id: string) => void;
+  updateTimelineTimestamp: (elapsed: number | null) => void;
   timelineDuration: number;
   createTimeline: () => SimplifiedTimeline;
   changeTimelineDuration: (newDuration: number) => void;

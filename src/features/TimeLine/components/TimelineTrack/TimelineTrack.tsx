@@ -14,7 +14,7 @@ import { TimelineAnimationConstants } from "@features/TimeLine/components/Timeli
 export const TimelineTrack: React.FC = () => {
   const { animations } = useAnimations();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const { timelineStage, adjustTimelineStage, setTimelineTrackWidth } =
+  const { timelineStage, adjustTimelineStage, setInitialTimelineTrackWidth } =
     useTimeline();
   const { removeAnimation } = useAnimations();
 
@@ -124,7 +124,7 @@ export const TimelineTrack: React.FC = () => {
   useLayoutEffect(() => {
     const { width } = containerRef.current!.getBoundingClientRect();
 
-    setTimelineTrackWidth(width);
+    setInitialTimelineTrackWidth(width);
   }, []);
 
   return (
