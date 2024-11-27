@@ -86,6 +86,10 @@ export const TimelineCursor = styled.div.attrs<{ x: number }>((props) => ({
   width: 2px;
   height: 100px;
   background-color: #ffffff;
+
+  left: 0;
+
+  transition: left 0.1s;
 `;
 
 export const DurationSelect = styled.select`

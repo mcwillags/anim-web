@@ -1,5 +1,5 @@
 import { BaseConstants } from "../../../constants";
-import { shouldPlayFrame } from "../../../utils";
+import { convertSecondsToMs, shouldPlayFrame } from "../../../utils";
 import { BaseModule, RequiredTimelineModuleProps } from "../../../models";
 import { ActionButton, GameRenderer } from "./components";
 import { setupModuleUsage } from "../../../utils";
@@ -21,7 +21,7 @@ export default class SnakeGame implements BaseModule {
   private _actionButton!: ActionButton;
 
   constructor({ duration }: RequiredTimelineModuleProps) {
-    this._durationMs = duration;
+    this._durationMs = convertSecondsToMs(duration);
     this._init();
   }
 

@@ -107,4 +107,4 @@ export class ModuleRunner {
   }
 }
 
-setupModuleUsage("ModuleRunner", ModuleRunner);
+setupModuleUsage("ModuleRunner", ModuleRunner as any);
