@@ -1,5 +1,5 @@
 import { BaseAnimation } from "../../instances";
-import { StoppableModule } from "../../models";
+import { RequiredTimelineModuleProps, StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 function random_rgba() {
@@ -19,7 +19,7 @@ export class BallAnimation extends BaseAnimation implements StoppableModule {
   private _ballRadius: number;
   private _color = random_rgba();
 
-  constructor({ duration }: { duration: number }) {
+  constructor({ duration }: RequiredTimelineModuleProps) {
     super(duration);
 
     this._ballX = 100; // Initial X position

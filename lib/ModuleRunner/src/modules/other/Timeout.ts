@@ -34,6 +34,10 @@ export default class Timeout implements StoppableModule {
   set onFrameUpdate(callback: (frameDelta: number) => void) {
     this._durationRunner.onFrameUpdate = callback;
   }
+
+  get duration(): number {
+    return this._durationRunner.duration;
+  }
 }
 
 setupModuleUsage("Timeout", Timeout);

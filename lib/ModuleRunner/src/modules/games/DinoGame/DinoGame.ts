@@ -1,5 +1,5 @@
-import { shouldPlayFrame } from "../../../utils";
-import { BaseModule } from "../../../models";
+import { convertSecondsToMs, shouldPlayFrame } from "../../../utils";
+import { BaseModule, RequiredTimelineModuleProps } from "../../../models";
 import { setupModuleUsage } from "../../../utils";
 import { BaseConstants } from "../../../constants";
 
@@ -36,9 +36,11 @@ export class DinoGame implements BaseModule {
   private _playing: boolean = false;
   private _leadingAnimationFrame?: number;
   private _prevTimestamp?: number;
+  private readonly _durationMs: number;
   private _onComplete?: () => void;
 
-  constructor() {
+  constructor({ duration }: RequiredTimelineModuleProps) {
+    this._durationMs = convertSecondsToMs(duration);
     this._initRenderingComponents();
     this.setupControls();
 
@@ -72,6 +74,10 @@ export class DinoGame implements BaseModule {
 
   set onComplete(callback: () => void) {
     this._onComplete = callback;
+  }
+
+  get duration() {
+    return this._durationMs;
   }
 
   _completeModule() {

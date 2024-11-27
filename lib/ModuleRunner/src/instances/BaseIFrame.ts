@@ -56,4 +56,8 @@ export class BaseIFrame {
   get completed(): boolean {
     return this._durationRunner.completed;
   }
+
+  get duration(): number {
+    return this._durationRunner.duration;
+  }
 }

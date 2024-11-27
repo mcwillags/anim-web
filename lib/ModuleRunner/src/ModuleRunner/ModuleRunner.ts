@@ -64,6 +64,9 @@ export class ModuleRunner {
 
     if (this._currentModule!.stoppable) {
       this._currentModule!.onFrameUpdate = this._updateTimeElapsed.bind(this);
+    } else {
+      if (this._updateTimeElapsed)
+        this._updateTimeElapsed(this._currentModule!.duration);
     }
 
     this._currentModule!.start();

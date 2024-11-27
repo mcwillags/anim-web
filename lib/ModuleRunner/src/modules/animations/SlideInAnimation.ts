@@ -1,5 +1,5 @@
 import { BaseAnimation } from "../../instances";
-import { StoppableModule } from "../../models";
+import { RequiredTimelineModuleProps, StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 export class SlideInAnimation extends BaseAnimation implements StoppableModule {
@@ -7,7 +7,7 @@ export class SlideInAnimation extends BaseAnimation implements StoppableModule {
   private ballX: number = 30;
   private ballY: number = 100;
 
-  constructor({ duration }: { duration: number }) {
+  constructor({ duration }: RequiredTimelineModuleProps) {
     super(duration);
   }
 

@@ -61,4 +61,8 @@ export class BaseVideo {
   get completed() {
     return this._durationRunner.completed;
   }
+
+  get duration() {
+    return this._durationRunner.duration;
+  }
 }

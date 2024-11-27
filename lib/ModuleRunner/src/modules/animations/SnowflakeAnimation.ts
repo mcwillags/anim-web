@@ -1,5 +1,5 @@
 import { BaseAnimation } from "../../instances";
-import { StoppableModule } from "../../models";
+import { RequiredTimelineModuleProps, StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 export class SnowflakeAnimation
@@ -8,7 +8,7 @@ export class SnowflakeAnimation
 {
   private snowflakes: { x: number; y: number; size: number }[] = [];
 
-  constructor({ duration }: { duration: number }) {
+  constructor({ duration }: RequiredTimelineModuleProps) {
     super(duration);
     this.createSnowflakes(100);
   }

@@ -1,6 +1,7 @@
 export interface BaseModule {
   stoppable?: boolean;
   shouldForcePause?: boolean;
+  duration: number;
   start(): void;
   stop(): void;
   resume(): void;
@@ -16,3 +17,7 @@ export interface StoppableModule extends BaseModule {
 }
 
 export type TimelineModule = BaseModule | StoppableModule;
+
+export interface RequiredTimelineModuleProps {
+  duration: number;
+}

@@ -77,4 +77,8 @@ export class DurationRunner {
   get completed(): boolean {
     return this._completed;
   }
+
+  get duration(): number {
+    return this._durationMs;
+  }
 }

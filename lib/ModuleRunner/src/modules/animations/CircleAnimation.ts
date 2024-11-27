@@ -1,5 +1,5 @@
 import { BaseAnimation } from "../../instances";
-import { StoppableModule } from "../../models";
+import { RequiredTimelineModuleProps, StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
 export class CircleAnimation extends BaseAnimation implements StoppableModule {
@@ -8,7 +8,7 @@ export class CircleAnimation extends BaseAnimation implements StoppableModule {
   private readonly centerX: number;
   private readonly centerY: number;
 
-  constructor({ duration }: { duration: number }) {
+  constructor({ duration }: RequiredTimelineModuleProps) {
     super(duration);
 
     this.centerX = this._canvasWidth / 2;

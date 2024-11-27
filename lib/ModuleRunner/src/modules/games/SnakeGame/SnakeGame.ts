@@ -1,6 +1,6 @@
 import { BaseConstants } from "../../../constants";
 import { shouldPlayFrame } from "../../../utils";
-import { BaseModule } from "../../../models";
+import { BaseModule, RequiredTimelineModuleProps } from "../../../models";
 import { ActionButton, GameRenderer } from "./components";
 import { setupModuleUsage } from "../../../utils";
 
@@ -13,13 +13,15 @@ export default class SnakeGame implements BaseModule {
   private _gameCompleted: boolean = false;
   private _onComplete!: (forcePause?: boolean) => void;
   private _leadingAnimationFrame?: number;
+  private readonly _durationMs: number;
 
   private _prevTimestamp?: number;
 
   private _renderer!: GameRenderer;
   private _actionButton!: ActionButton;
 
-  constructor() {
+  constructor({ duration }: RequiredTimelineModuleProps) {
+    this._durationMs = duration;
     this._init();
   }
 
@@ -146,6 +148,10 @@ export default class SnakeGame implements BaseModule {
 
   public set onComplete(callback: () => void) {
     this._onComplete = callback;
+  }
+
+  public get duration(): number {
+    return this._durationMs;
   }
 }
 

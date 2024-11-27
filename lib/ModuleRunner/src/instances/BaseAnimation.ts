@@ -145,4 +145,8 @@ export class BaseAnimation {
   public get playing(): boolean {
     return this._playing;
   }
+
+  public get duration(): number {
+    return this._durationMs;
+  }
 }
