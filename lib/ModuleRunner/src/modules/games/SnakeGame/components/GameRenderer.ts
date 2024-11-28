@@ -18,13 +18,15 @@ const getInitialSnakePosition = () => ({
 export class GameRenderer {
   private _segments: SnakePosition[] = [];
 
-  constructor(private readonly _context: CanvasRenderingContext2D) {}
+  constructor(private readonly _context: CanvasRenderingContext2D) {
+    this._init();
+  }
 
-  init() {
+  private _init() {
     this._segments.push(getInitialSnakePosition());
   }
 
-  render() {
+  public render() {
     this._context.clearRect(
       0,
       0,

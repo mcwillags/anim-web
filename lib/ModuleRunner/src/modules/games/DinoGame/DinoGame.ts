@@ -5,6 +5,7 @@ import { BaseConstants } from "../../../constants";
 
 export class DinoGame implements BaseModule {
   static isDev = true;
+  public shouldForcePause = true;
 
   private _canvas$!: HTMLCanvasElement;
   private _context!: CanvasRenderingContext2D;
@@ -197,19 +198,26 @@ export class DinoGame implements BaseModule {
     if (this.cactusX < -this.cactusWidth) {
       this.cactusX = this._canvasWidth;
       this.score++;
+
+      // Генерація нового випадкового місця для птаха після кактуса
+      if (this.score % 2 === 0) {
+        this.birdX = this._canvasWidth + Math.random() * 200 + 200; // Птах з'являється випадково після кактуса
+      }
     }
   }
 
   private updateBird(): void {
     this.birdX -= this.speed;
+
     if (this.birdX < -this.birdWidth) {
-      this.birdX = 1000;
+      this.birdX = this._canvasWidth + Math.random() * 300 + 100; // Рандомне повернення птаха
+      this.birdY = Math.random() * (this._canvasHeight / 1.5 - 150) + 150; // Рандомізація висоти птаха
     }
   }
 
   private increaseSpeed(): void {
     if (this.score > 0 && this.score % 5 === 0) {
-      this.speed += 0.01;
+      this.speed += 0.1; // Плавне підвищення швидкості для уникнення надто довгого бігу
     }
   }
 

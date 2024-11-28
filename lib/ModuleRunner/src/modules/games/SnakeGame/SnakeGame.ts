@@ -1,27 +1,21 @@
-import { BaseConstants } from "../../../constants";
-import { convertSecondsToMs, shouldPlayFrame } from "../../../utils";
 import { BaseModule, RequiredTimelineModuleProps } from "../../../models";
 import { ActionButton, GameRenderer } from "./components";
 import { setupModuleUsage } from "../../../utils";
+import { BaseGame } from "../../../instances";
 
-export default class SnakeGame implements BaseModule {
+const SNAKE_GAME_FPS = 15;
+
+export class SnakeGame extends BaseGame implements BaseModule {
+  static isDev = true;
   public shouldForcePause = true;
 
-  private _canvas$!: HTMLCanvasElement;
-  private _context!: CanvasRenderingContext2D;
-  private _playing: boolean = false;
   private _gameCompleted: boolean = false;
-  private _onComplete!: (forcePause?: boolean) => void;
-  private _leadingAnimationFrame?: number;
-  private readonly _durationMs: number;
-
-  private _prevTimestamp?: number;
 
   private _renderer!: GameRenderer;
   private _actionButton!: ActionButton;
 
   constructor({ duration }: RequiredTimelineModuleProps) {
-    this._durationMs = convertSecondsToMs(duration);
+    super(duration, SNAKE_GAME_FPS);
     this._init();
   }
 
@@ -29,25 +23,6 @@ export default class SnakeGame implements BaseModule {
     this._initRenderingComponents();
     this._initButton();
     this._initRenderer();
-  }
-
-  private _initRenderingComponents() {
-    const canvas$ = document.querySelector<HTMLCanvasElement>(
-      `#${BaseConstants.canvasId}`,
-    );
-
-    if (canvas$ === null) {
-      throw new Error("Canvas element is not defined");
-    }
-
-    const context = canvas$.getContext("2d");
-
-    if (context === null) {
-      throw new Error("Canvas rendering context is not defined");
-    }
-
-    this._canvas$ = canvas$;
-    this._context = context;
   }
 
   private _initButton() {
@@ -71,38 +46,19 @@ export default class SnakeGame implements BaseModule {
 
   private _initRenderer() {
     this._renderer = new GameRenderer(this._context);
-    this._renderer.init();
   }
 
-  start() {
-    this._playing = true;
-    this._canvas$.style.visibility = "visible";
-    this._loop();
-
+  public start() {
+    this._start(this._render.bind(this));
     setTimeout(() => (this._gameCompleted = true), 2500);
   }
 
-  stop() {
-    return;
-  }
-
-  resume() {
-    return;
-  }
-
   public onDestroy() {
-    cancelAnimationFrame(this._leadingAnimationFrame as number);
+    this._cleanUp();
     this._actionButton.destroy();
   }
 
-  private _loop() {
-    if (!this._playing) return;
-
-    if (!this._shouldPlayNextFrame()) {
-      this._leadingAnimationFrame = requestAnimationFrame(() => this._loop());
-      return;
-    }
-
+  private _render() {
     if (!this._gameCompleted) {
       this._renderer.render();
     }
@@ -110,24 +66,6 @@ export default class SnakeGame implements BaseModule {
     if (this._gameCompleted) {
       this._renderButton();
     }
-
-    this._leadingAnimationFrame = requestAnimationFrame(() => this._loop());
-  }
-
-  private _shouldPlayNextFrame(): boolean {
-    if (this._prevTimestamp === undefined) {
-      this._prevTimestamp = Date.now();
-      return true;
-    }
-
-    const frameDelta = Date.now() - this._prevTimestamp;
-
-    if (shouldPlayFrame(frameDelta)) {
-      this._prevTimestamp = Date.now();
-      return true;
-    }
-
-    return false;
   }
 
   private _renderButton() {
@@ -139,19 +77,10 @@ export default class SnakeGame implements BaseModule {
   }
 
   private _completeItem() {
-    cancelAnimationFrame(this._leadingAnimationFrame as number);
-    this._context.clearRect(0, 0, 1200, 590);
-    this._canvas$.style.visibility = "hidden";
-    this._playing = false;
-    this._onComplete(true);
-  }
-
-  public set onComplete(callback: () => void) {
-    this._onComplete = callback;
-  }
-
-  public get duration(): number {
-    return this._durationMs;
+    this._cleanUp();
+    if (this._onComplete) {
+      this._onComplete(true);
+    }
   }
 }
 
