@@ -5,3 +5,4 @@ export * from "./SnowflakeAnimation";
 export * from "./DynamicLinesAnimation";
 export * from "./DynamicWaveAnimation";
 export * from "./GlobeAnimation";
+export * from "./AtomAnimation";

@@ -2,7 +2,7 @@ import { BaseAnimation } from "../../instances";
 import { RequiredTimelineModuleProps, StoppableModule } from "../../models";
 import { setupModuleUsage } from "../../utils";
 
-const DOTS_AMOUNT = 3000; 
+const DOTS_AMOUNT = 1000; 
 const DOT_RADIUS = 4;
 const DOT_COLOR = "lime";
 
