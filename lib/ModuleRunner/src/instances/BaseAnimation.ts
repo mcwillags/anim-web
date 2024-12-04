@@ -124,10 +124,11 @@ export class BaseAnimation {
 
   private _completeModule(): void {
     cancelAnimationFrame(this._leadingAnimationFrameId as number);
-    this._context.clearRect(0, 0, 1200, 590);
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
     this._canvas$.style.visibility = "hidden";
     this._completed = true;
     this._playing = false;
+    
 
     if (this._onComplete) {
       this._onComplete();

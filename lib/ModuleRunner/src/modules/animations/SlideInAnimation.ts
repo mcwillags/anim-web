@@ -33,14 +33,14 @@ export class SlideInAnimation extends BaseAnimation implements StoppableModule {
     this.ballX = 30 + (maxBallX - 30) * progress;
     this.rotationAngle += 6;
 
+    this.drawShadow();
+
     this._context.save();
     this._context.translate(this.ballX, this.ballY);
     this._context.rotate((this.rotationAngle * Math.PI) / 180);
 
     this.drawBall();
     this._context.restore();
-
-    this.drawShadow();
   }
 
   private drawBall(): void {

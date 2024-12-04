@@ -120,8 +120,8 @@ export class GlobeAnimation extends BaseAnimation implements StoppableModule {
   }
 
   private __loop(): void {
+    this.clearCanvas()
     const ctx = this._context;
-    ctx.clearRect(0, 0, this.width, this.height);
 
     this.rotation += 0.001 * this._timeScale;
     const sineRotation = Math.sin(this.rotation);
@@ -139,6 +139,16 @@ export class GlobeAnimation extends BaseAnimation implements StoppableModule {
       );
     }
   }
+
+  private clearCanvas(): void {
+    this._context.globalCompositeOperation = "source-over";
+    this._context.shadowColor = "rgba(0, 0, 0, 0)";
+    this._context.shadowBlur = 0;
+    this._context.globalAlpha = 1;
+    this._context.lineWidth = 1;
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+  }
+
 }
 
 setupModuleUsage("GlobeAnimation", GlobeAnimation);

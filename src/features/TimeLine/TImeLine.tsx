@@ -53,7 +53,6 @@ export const Timeline = () => {
   return (
     <TimelineContainer>
       <TimelineHeader>
-        <h2>Timeline</h2>
         <DurationContainer>
           <DurationLabel>Duration:</DurationLabel>
           <DurationSelect

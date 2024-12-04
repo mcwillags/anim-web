@@ -78,7 +78,22 @@ export class DynamicLinesAnimation extends BaseAnimation implements StoppableMod
     }
 
     this.lines.forEach((line) => line.step(this._context, this._timeScale));
-  }
+
+    if (this.tick >= this._cycleDuration * this._timeScale) {
+      if (this.progress >= 100) {
+        this.clearCanvas();
+      }
+    }
+}
+
+private clearCanvas(): void {
+  this._context.globalCompositeOperation = "source-over";
+  this._context.shadowColor = "rgba(0, 0, 0, 0)";
+  this._context.shadowBlur = 0;
+  this._context.globalAlpha = 1;
+  this._context.lineWidth = 1;
+  this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+}
 }
 
 class Line {
@@ -155,11 +170,11 @@ class Line {
     const y = this.addedY * wave;
 
     context.shadowBlur = prop * this.opts.shadowToTimePropMult;
-    context.fillStyle = context.shadowColor = this.color.replace(
+    context.fillStyle = context.shadowColor = this.color?.replace(
       "light",
       this.opts.baseLight +
-        this.opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier)
-    );
+      this.opts.addedLight * Math.sin(this.cumulativeTime * (this.lightInputMultiplier || 0))
+    ) || "";
     context.fillRect(
       this.opts.cx + (this.x + x) * this.opts.len,
       this.opts.cy + (this.y + y) * this.opts.len,

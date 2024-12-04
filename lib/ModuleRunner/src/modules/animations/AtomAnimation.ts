@@ -32,6 +32,7 @@ export class AtomAnimation extends BaseAnimation implements StoppableModule {
   }
 
   private __loop(): void {
+    this.clearCanvas()
     const ctx = this._context;
     const width = this._canvasWidth;
     const height = this._canvasHeight;
@@ -92,11 +93,12 @@ export class AtomAnimation extends BaseAnimation implements StoppableModule {
   }
 
   private clearCanvas(): void {
-    const ctx = this._context;
-    const width = this._canvasWidth;
-    const height = this._canvasHeight;
-
-    ctx.clearRect(0, 0, width, height);
+    this._context.globalCompositeOperation = "source-over";
+    this._context.shadowColor = "rgba(0, 0, 0, 0)";
+    this._context.shadowBlur = 0;
+    this._context.globalAlpha = 1;
+    this._context.lineWidth = 1;
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
   }
 }
 

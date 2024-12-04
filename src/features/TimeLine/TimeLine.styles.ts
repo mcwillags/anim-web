@@ -83,17 +83,42 @@ export const TimelineCursor = styled.div.attrs<{ x: number }>((props) => ({
 }))`
   z-index: 2;
   position: absolute;
-  width: 2px;
-  height: 100px;
-  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  left: 0;
+  &::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 10px solid #ffffff;
+  }
+
+  &::after {
+    content: '';
+    width: 2px;
+    height: 100px;
+    background-color: #ffffff;
+    margin-top: 2px;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  }
 
   transition: left 0.1s;
 `;
 
 export const DurationSelect = styled.select`
   margin-left: 8px;
-  padding: 4px;
+  padding: 8px 12px;
   font-size: 16px;
+  border-radius: 4px;
+  background-color: #2c2c2c; 
+  color: #ffffff;
+  border: 1px solid #444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background-color: #3a3a3a;
+  }
 `;
