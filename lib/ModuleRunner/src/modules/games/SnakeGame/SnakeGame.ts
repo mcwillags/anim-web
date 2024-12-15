@@ -1,85 +1,62 @@
-import { BaseConstants } from "../../../constants";
 import { convertSecondsToMs, shouldPlayFrame } from "../../../utils";
 import { BaseModule, RequiredTimelineModuleProps } from "../../../models";
-import { ActionButton, GameRenderer } from "./components";
 import { setupModuleUsage } from "../../../utils";
+import { BaseConstants } from "../../../constants";
 
-export default class SnakeGame implements BaseModule {
+export class DinoGame implements BaseModule {
+  static isDev = true;
   public shouldForcePause = true;
 
   private _canvas$!: HTMLCanvasElement;
   private _context!: CanvasRenderingContext2D;
+  private _canvasWidth!: number;
+  private _canvasHeight!: number;
+
+  private dinoX: number = 100;
+  private dinoY: number;
+  private dinoWidth: number = 40;
+  private dinoHeight: number = 40;
+  private velocityY: number = 0;
+  private gravity: number = 0.5;
+  private isJumping: boolean = false;
+  private isDucking: boolean = false;
+
+  private groundY: number;
+  private cactusX;
+  private cactusWidth: number = 30;
+  private cactusHeight: number = 50;
+
+  private birdX: number;
+  private birdY: number = 320;
+  private birdWidth: number = 30;
+  private birdHeight: number = 20;
+
+  private speed: number = 5;
+  private score: number = 0;
+  private gameOver: boolean = false;
   private _playing: boolean = false;
-  private _gameCompleted: boolean = false;
-  private _onComplete!: (forcePause?: boolean) => void;
   private _leadingAnimationFrame?: number;
-  private readonly _durationMs: number;
-
   private _prevTimestamp?: number;
-
-  private _renderer!: GameRenderer;
-  private _actionButton!: ActionButton;
+  private readonly _durationMs: number;
+  private _onComplete?: () => void;
 
   constructor({ duration }: RequiredTimelineModuleProps) {
     this._durationMs = convertSecondsToMs(duration);
-    this._init();
-  }
-
-  private _init() {
     this._initRenderingComponents();
-    this._initButton();
-    this._initRenderer();
-  }
+    this.setupControls();
 
-  private _initRenderingComponents() {
-    const canvas$ = document.querySelector<HTMLCanvasElement>(
-      `#${BaseConstants.canvasId}`,
-    );
+    this.groundY = this._canvasHeight - 50;
+    this.cactusX = this._canvasWidth;
+    this.dinoY = this.groundY - this.dinoHeight;
 
-    if (canvas$ === null) {
-      throw new Error("Canvas element is not defined");
-    }
-
-    const context = canvas$.getContext("2d");
-
-    if (context === null) {
-      throw new Error("Canvas rendering context is not defined");
-    }
-
-    this._canvas$ = canvas$;
-    this._context = context;
-  }
-
-  private _initButton() {
-    const BUTTON_WIDTH = 100;
-    const BUTTON_HEIGHT = 50;
-
-    const buttonProps = {
-      x: this._canvas$.width / 2 - BUTTON_WIDTH / 2,
-      y: this._canvas$.height / 2 - BUTTON_HEIGHT / 2,
-      width: BUTTON_WIDTH,
-      height: BUTTON_HEIGHT,
-      canvas$: this._canvas$,
-      context: this._context,
-      text: "Complete module",
-    };
-
-    this._actionButton = new ActionButton(buttonProps);
-
-    this._actionButton.onClick = this._onActionButtonClick.bind(this);
-  }
-
-  private _initRenderer() {
-    this._renderer = new GameRenderer(this._context);
-    this._renderer.init();
+    this.birdX = this._canvasWidth + 200;
+    this.birdY = this._canvasHeight / 1.5;
   }
 
   start() {
-    this._playing = true;
     this._canvas$.style.visibility = "visible";
+    this._playing = true;
     this._loop();
-
-    setTimeout(() => (this._gameCompleted = true), 2500);
   }
 
   stop() {
@@ -90,9 +67,26 @@ export default class SnakeGame implements BaseModule {
     return;
   }
 
-  public onDestroy() {
+  onDestroy() {
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
     cancelAnimationFrame(this._leadingAnimationFrame as number);
-    this._actionButton.destroy();
+    this._canvas$.style.visibility = "none";
+  }
+
+  set onComplete(callback: () => void) {
+    this._onComplete = callback;
+  }
+
+  get duration() {
+    return this._durationMs;
+  }
+
+  _completeModule() {
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+    this._canvas$.style.visibility = "hidden";
+    if (this._onComplete) {
+      this._onComplete();
+    }
   }
 
   private _loop() {
@@ -103,12 +97,14 @@ export default class SnakeGame implements BaseModule {
       return;
     }
 
-    if (!this._gameCompleted) {
-      this._renderer.render();
+    if (!this.gameOver) {
+      this.renderGame();
     }
 
-    if (this._gameCompleted) {
-      this._renderButton();
+    if (this.gameOver) {
+      this.showGameOver();
+      setTimeout(() => this._completeModule(), 3000);
+      return;
     }
 
     this._leadingAnimationFrame = requestAnimationFrame(() => this._loop());
@@ -130,29 +126,275 @@ export default class SnakeGame implements BaseModule {
     return false;
   }
 
-  private _renderButton() {
-    this._actionButton.render();
+  private renderGame(): void {
+    this._context.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+
+    this.updateDino();
+    this.updateCactus();
+    this.updateBird();
+    this.increaseSpeed();
+
+    this.checkCollisions();
+    this.drawBackground();
+    this.drawDino();
+    this.drawCactus();
+    this.drawBird();
+
+    this.drawScore();
   }
 
-  private _onActionButtonClick() {
-    this._completeItem();
+  private setupControls(): void {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp" && !this.isJumping && !this.gameOver) {
+        this.velocityY = -12;
+        this.isJumping = true;
+      } else if (e.key === "ArrowDown" && !this.isJumping && !this.gameOver) {
+        this.isDucking = true;
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "ArrowDown") {
+        this.isDucking = false;
+      }
+    });
   }
 
-  private _completeItem() {
-    cancelAnimationFrame(this._leadingAnimationFrame as number);
-    this._context.clearRect(0, 0, 1200, 590);
-    this._canvas$.style.visibility = "hidden";
-    this._playing = false;
-    this._onComplete(true);
+  private _initRenderingComponents() {
+    const canvas$ = document.querySelector<HTMLCanvasElement>(
+      `#${BaseConstants.canvasId}`,
+    );
+
+    if (canvas$ === null) {
+      throw new Error("Canvas element is not defined");
+    }
+
+    const context = canvas$.getContext("2d");
+
+    if (context === null) {
+      throw new Error("Canvas rendering context is not defined");
+    }
+
+    this._canvas$ = canvas$;
+    this._context = context;
+    this._canvasHeight = canvas$.height;
+    this._canvasWidth = canvas$.width;
   }
 
-  public set onComplete(callback: () => void) {
-    this._onComplete = callback;
+  private updateDino(): void {
+    if (!this.isDucking) {
+      this.dinoY += this.velocityY;
+      this.velocityY += this.gravity;
+
+      if (this.dinoY >= this.groundY - this.dinoHeight) {
+        this.dinoY = this.groundY - this.dinoHeight;
+        this.isJumping = false;
+      }
+    }
   }
 
-  public get duration(): number {
-    return this._durationMs;
+  private updateCactus(): void {
+    this.cactusX -= this.speed;
+    if (this.cactusX < -this.cactusWidth) {
+      this.cactusX = this._canvasWidth;
+      this.score++;
+
+      // Генерація нового випадкового місця для птаха після кактуса
+      if (this.score % 2 === 0) {
+        this.birdX = this._canvasWidth + Math.random() * 200 + 200; // Птах з'являється випадково після кактуса
+      }
+    }
+  }
+
+  private updateBird(): void {
+    this.birdX -= this.speed;
+
+    if (this.birdX < -this.birdWidth) {
+      this.birdX = this._canvasWidth + Math.random() * 300 + 100; // Рандомне повернення птаха
+      this.birdY = Math.random() * (this._canvasHeight / 1.5 - 150) + 150; // Рандомізація висоти птаха
+    }
+  }
+
+  private increaseSpeed(): void {
+    if (this.score > 0 && this.score % 5 === 0) {
+      this.speed += 0.1; // Плавне підвищення швидкості для уникнення надто довгого бігу
+    }
+  }
+
+  private checkCollisions(): void {
+    if (
+      this.dinoX < this.cactusX + this.cactusWidth &&
+      this.dinoX + this.dinoWidth > this.cactusX &&
+      this.dinoY + this.dinoHeight > this.groundY - this.cactusHeight
+    ) {
+      this.gameOver = true;
+    }
+
+    if (
+      this.dinoX < this.birdX + this.birdWidth &&
+      this.dinoX + this.dinoWidth > this.birdX &&
+      this.dinoY < this.birdY + this.birdHeight &&
+      !this.isDucking
+    ) {
+      this.gameOver = true;
+    }
+  }
+
+  private drawBackground() {
+    this._context.fillStyle = "#87CEEB";
+    this._context.fillRect(0, 0, this._canvasWidth, this._canvasHeight);
+
+    this._context.fillStyle = "#FFD700";
+    this._context.beginPath();
+    this._context.arc(700, 80, 50, 0, Math.PI * 2);
+    this._context.fill();
+
+    this._context.fillStyle = "#FFF";
+    this._context.beginPath();
+    this._context.arc(200, 100, 30, 0, Math.PI * 2);
+    this._context.arc(230, 100, 40, 0, Math.PI * 2);
+    this._context.arc(260, 100, 30, 0, Math.PI * 2);
+    this._context.fill();
+
+    this._context.fillStyle = "#228B22";
+    this._context.fillRect(0, this.groundY, this._canvasWidth, 50);
+  }
+
+  private drawDino(): void {
+    this._context.save();
+
+    if (this.isDucking) {
+      this._context.fillStyle = "#556B2F";
+      this._context.fillRect(
+        this.dinoX,
+        this.dinoY + 20,
+        this.dinoWidth,
+        this.dinoHeight / 2,
+      );
+
+      this._context.beginPath();
+      this._context.moveTo(this.dinoX - 10, this.dinoY + 30);
+      this._context.lineTo(this.dinoX, this.dinoY + 25);
+      this._context.lineTo(this.dinoX, this.dinoY + 35);
+      this._context.fillStyle = "#556B2F";
+      this._context.fill();
+
+      this._context.fillStyle = "#FFF";
+      this._context.beginPath();
+      this._context.arc(this.dinoX + 30, this.dinoY + 30, 3, 0, Math.PI * 2);
+      this._context.fill();
+    } else {
+      this._context.fillStyle = "#556B2F";
+      this._context.fillRect(
+        this.dinoX,
+        this.dinoY,
+        this.dinoWidth,
+        this.dinoHeight,
+      );
+
+      this._context.beginPath();
+      this._context.moveTo(this.dinoX - 10, this.dinoY + 20);
+      this._context.lineTo(this.dinoX, this.dinoY + 15);
+      this._context.lineTo(this.dinoX, this.dinoY + 25);
+      this._context.fillStyle = "#556B2F";
+      this._context.fill();
+
+      this._context.fillStyle = "#6B8E23";
+      this._context.fillRect(this.dinoX + 5, this.dinoY + 20, 10, 5);
+
+      this._context.fillStyle = "#FFF";
+      this._context.beginPath();
+      this._context.arc(this.dinoX + 30, this.dinoY + 10, 3, 0, Math.PI * 2);
+      this._context.fill();
+    }
+
+    this._context.fillStyle = "#8B4513";
+    this._context.fillRect(
+      this.dinoX + 10,
+      this.dinoY + this.dinoHeight - 5,
+      10,
+      5,
+    );
+    this._context.fillRect(
+      this.dinoX + 25,
+      this.dinoY + this.dinoHeight - 5,
+      10,
+      5,
+    );
+
+    this._context.restore();
+  }
+
+  private drawBird(): void {
+    this._context.save();
+
+    this._context.fillStyle = "#DC143C";
+    this._context.beginPath();
+    this._context.ellipse(this.birdX, this.birdY, 15, 10, 0, 0, Math.PI * 2);
+    this._context.fill();
+    this._context.fillStyle = "#FF6347";
+    this._context.beginPath();
+    this._context.moveTo(this.birdX - 10, this.birdY);
+    this._context.lineTo(this.birdX, this.birdY - 15);
+    this._context.lineTo(this.birdX + 10, this.birdY);
+    this._context.fill();
+    this._context.fillStyle = "#FFF";
+    this._context.beginPath();
+    this._context.arc(this.birdX + 5, this.birdY - 3, 2, 0, Math.PI * 2);
+    this._context.fill();
+
+    this._context.restore();
+  }
+
+  private drawCactus(): void {
+    this._context.fillStyle = "#2E8B57";
+    this._context.fillRect(
+      this.cactusX,
+      this.groundY - this.cactusHeight,
+      this.cactusWidth,
+      this.cactusHeight,
+    );
+
+    // Cactus arms
+    this._context.fillRect(
+      this.cactusX - 5,
+      this.groundY - this.cactusHeight + 10,
+      10,
+      20,
+    );
+    this._context.fillRect(
+      this.cactusX + this.cactusWidth - 5,
+      this.groundY - this.cactusHeight + 10,
+      10,
+      20,
+    );
+  }
+
+  private drawScore(): void {
+    this._context.fillStyle = "#000";
+    this._context.font = "20px Arial";
+    this._context.fillText(`Score: ${this.score}`, 10, 30);
+  }
+
+  private showGameOver(): void {
+    this._context.fillStyle = "rgba(0, 0, 0, 0.5)";
+    this._context.fillRect(0, 0, this._canvasWidth, this._canvasHeight);
+
+    this._context.fillStyle = "#FFF";
+    this._context.font = "30px Arial";
+    this._context.textAlign = "center";
+    this._context.fillText(
+      "Game Over!",
+      this._canvasWidth / 2,
+      this._canvasHeight / 2,
+    );
+    this._context.font = "20px Arial";
+    this._context.fillText(
+      `Final Score: ${this.score}`,
+      this._canvasWidth / 2,
+      240,
+    );
   }
 }
 
-setupModuleUsage("SnakeGame", SnakeGame);
+setupModuleUsage("DinoGame", DinoGame);
